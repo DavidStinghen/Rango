@@ -3,15 +3,17 @@
 use Illuminate\Http\Request;
 
 
-Route::post('register', 'Auth\RegisterController@register');
-
-Route::post('login', 'Auth\LoginController@login');
-Route::post('logout', 'Auth\LoginController@logout');
-
-Route::group(['middleware' => 'auth:api'], function() {
-    Route::get('restaurants', 'RestaurantController@index');
-    Route::get('restaurants/{restaurant}', 'RestaurantController@show');
-    Route::post('restaurants', 'RestaurantController@store');
-    Route::put('restaurants/{restaurant}', 'RestaurantController@update');
-    Route::delete('restaurants/{restaurant}', 'RestaurantController@delete');
+Route::post('login', 'ApiController@login');
+Route::post('register', 'ApiController@register');
+ 
+Route::group(['middleware' => 'auth.jwt'], function () {
+    Route::get('logout', 'ApiController@logout');
+ 
+    Route::get('user', 'ApiController@getAuthUser');
+ 
+    Route::get('restaurants', 'ProductController@index');
+    Route::get('restaurants/{id}', 'ProductController@show');
+    Route::post('restaurants', 'ProductController@store');
+    Route::put('restaurants/{id}', 'ProductController@update');
+    Route::delete('restaurants/{id}', 'ProductController@destroy');
 });
