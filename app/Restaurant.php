@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Restaurants extends Model
 {
-    protected $fillable = ['name', 'description', 'location', 'fone', 'user_id'];
+    protected $fillable = ['name', 'description', 'location', 'fone'];
 
     public function userAssociation() {
-        return $this->belongsTo('User');
+        return $this->belongsTo(User::class);
     }
 }
