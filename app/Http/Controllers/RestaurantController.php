@@ -1,35 +1,119 @@
 <?php
 
+namespace App\Http\Controllers;
+
+use App\Restaurant;
+use App\User;
+use Illuminate\Http\Request;
+use JWTAuth;
+
 class RestaurantController extends Controller
 {
-    public function index()
+    protected $user;
+ 
+    public function __construct()
     {
-        return Restaurant::all();
+        $this->user = JWTAuth::parseToken()->authenticate();
     }
 
-    public function show(Restaurant $restaurant)
+    public function index()
     {
+        return $this->user
+            ->restaurants()
+            ->get(['name', 'description', 'location', 'fone'])
+            ->toArray();
+    }
+
+    public function show($id)
+    {
+        $restaurant = $this->user->restaurants()->find($id);
+    
+        if (!$restaurant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, restaurant with id ' . $id . ' cannot be found'
+            ], 400);
+        }
+    
         return $restaurant;
     }
 
+
     public function store(Request $request)
     {
-        $restaurant = Restaurant::create($request->all());
+        $this->validate($request, [
+            'name' => 'required',
+            'description' => 'required',
+            'location' => 'required',
+            'fone' => 'required'
+        ]);
 
-        return response()->json($restaurant, 201);
+        $restaurant = new Restaurant();
+        $restaurant->name = $request->name;
+        $restaurant->description = $request->description;
+        $restaurant->location = $request->location;
+        $restaurant->fone = $request->fone;
+
+        if ($this->user->restaurants()->save($restaurant))
+            return response()->json([
+                'success' => true,
+                'restaurant' => $restaurant
+            ]);
+        else
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, restaurant could not be added'
+            ], 500);
     }
 
-    public function update(Request $request, Restaurant $restaurant)
+    public function update(Request $request, $id)
     {
-        $restaurant->update($request->all());
-
-        return response()->json($restaurant, 200);
+        $restaurant = $this->user->restaurants()->find($id);
+    
+        if (!$restaurant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, restaurant with id ' . $id . ' cannot be found'
+            ], 400);
+        }
+    
+        $updated = $restaurant->fill($request->all())
+            ->save();
+    
+        if ($updated) {
+            return response()->json([
+                'success' => true
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, restaurant could not be updated'
+            ], 500);
+        }
     }
 
-    public function delete(Restaurant $restaurant)
+    public function destroy($id)
     {
-        $restaurant->delete();
-
-        return response()->json(null, 204);
+        $restaurant = $this->user->restaurants()->find($id);
+    
+        if (!$restaurant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, restaurant with id ' . $id . ' cannot be found'
+            ], 400);
+        }
+    
+        if ($restaurant->delete()) {
+            return response()->json([
+                'success' => true
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'restaurant could not be deleted'
+            ], 500);
+        }
     }
+
+
 }
