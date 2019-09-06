@@ -18,6 +18,7 @@ class ApiController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
+        $user->provider = $request->provider;
         $user->save();
  
         if ($this->loginAfterSignUp) {

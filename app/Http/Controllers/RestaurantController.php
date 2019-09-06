@@ -6,6 +6,7 @@ use App\Restaurant;
 use App\User;
 use Illuminate\Http\Request;
 use JWTAuth;
+use DB;
 
 class RestaurantController extends Controller
 {
@@ -47,6 +48,20 @@ class RestaurantController extends Controller
             'location' => 'required',
             'fone' => 'required'
         ]);
+
+       /**
+        * $provider = DB::table('users')->where([
+        *   ['id' == $this->user],
+        *    ['provider' == 1]
+        *])->get();
+
+        *if (!$provider) {
+        *   return response()->json([
+        *        'success' => false,
+        *       'message' => 'Only provider can create restaurants'
+        *    ]);
+        *}
+        */ 
 
         $restaurant = new Restaurant();
         $restaurant->name = $request->name;
