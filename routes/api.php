@@ -20,4 +20,14 @@ Route::group(['middleware' => 'auth.jwt'], function () {
     Route::post('products', 'ProductController@store');
     Route::put('products/{id}', 'ProductController@update');
     Route::delete('products/{id}', 'ProductController@destroy');
+
+    Route::get('menus', 'MenuController@index');
+    Route::get('menus/{id}', 'MenuController@show');
+    Route::post('menus', 'MenuController@store');
+    Route::put('menus/{id}', 'MenuController@update');
+    Route::delete('menus/{id}', 'MenuController@destroy');
+
+    Route::post('registration', 'RegistrationController@store');
+    Route::delete('registration/{id}', 'RegistrationController@destroy');
+
 });

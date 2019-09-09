@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Product;
-use App\Restaurant;
 use App\User;
 use Illuminate\Http\Request;
 use JWTAuth;
@@ -12,12 +11,10 @@ use DB;
 class ProductController extends Controller
 {
     protected $user;
-    protected $restaurant;
  
     public function __construct()
     {
         $this->user = JWTAuth::parseToken()->authenticate();
-        $this->restaurant;
     }
 
     public function store(Request $request)
@@ -26,14 +23,12 @@ class ProductController extends Controller
             'name' => 'required',
             'description' => 'required',
             'price' => 'required',
-            'restaurant_id' => 'required',
         ]);
 
         $product = new Product();
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
-        $product->restaurant_id = $request->restaurant_id;
 
         if ($this->user->products()->save($product))
         return response()->json([

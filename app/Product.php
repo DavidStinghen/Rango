@@ -7,4 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $fillable = ['name', 'description', 'price'];
+
+    public function registrations()
+    {
+        return $this->hasMany(Registration::class);
+    }
+
+    
+
 }
